@@ -15,7 +15,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             ComposeExerciseTheme {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
-                    TimesTable()
+                    InstagramProfileCard()
                 }
             }
         }

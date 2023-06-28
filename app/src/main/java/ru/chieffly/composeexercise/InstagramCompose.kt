@@ -6,11 +6,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.Card
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,6 +29,7 @@ import ru.chieffly.composeexercise.ui.theme.ComposeExerciseTheme
 
 @Composable
 fun InstagramProfileCard() {
+    val isFollowed = rememberSaveable { mutableStateOf(false) }
     Card(
         backgroundColor = MaterialTheme.colors.background,
         modifier = Modifier.padding(8.dp),
@@ -78,8 +78,18 @@ fun InstagramProfileCard() {
                 fontSize = 14.sp,
                 fontFamily = FontFamily.SansSerif,
             )
-            Button(onClick = {  }) {
-                Text(text = "Follow")
+            Button(onClick = {
+                isFollowed.value = !isFollowed.value
+            }, colors = ButtonDefaults.buttonColors(
+                backgroundColor = if (isFollowed.value) {
+                    MaterialTheme.colors.onBackground.copy(alpha = 0.5f)
+                } else {
+                    MaterialTheme.colors.primary.copy()
+                }
+            )
+            ) {
+                val text = if (isFollowed.value) "Unfollow" else "Follow"
+                Text(text = text)
             }
         }
     }

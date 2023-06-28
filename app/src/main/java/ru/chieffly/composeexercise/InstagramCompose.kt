@@ -8,6 +8,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -28,8 +31,8 @@ import ru.chieffly.composeexercise.ui.theme.ComposeExerciseTheme
 
 
 @Composable
-fun InstagramProfileCard() {
-    val isFollowed = rememberSaveable { mutableStateOf(false) }
+fun InstagramProfileCard(viewModel: MainViewModel) {
+    val isFollowed = viewModel.isFollowing.observeAsState(false)
     Card(
         backgroundColor = MaterialTheme.colors.background,
         modifier = Modifier.padding(8.dp),
@@ -78,20 +81,34 @@ fun InstagramProfileCard() {
                 fontSize = 14.sp,
                 fontFamily = FontFamily.SansSerif,
             )
-            Button(onClick = {
-                isFollowed.value = !isFollowed.value
-            }, colors = ButtonDefaults.buttonColors(
-                backgroundColor = if (isFollowed.value) {
-                    MaterialTheme.colors.onBackground.copy(alpha = 0.5f)
-                } else {
-                    MaterialTheme.colors.primary.copy()
-                }
-            )
-            ) {
-                val text = if (isFollowed.value) "Unfollow" else "Follow"
-                Text(text = text)
+            //Statefull composable function
+            FollowButton(isFollowed = isFollowed) {
+                viewModel.changesFollowingStatus()
             }
         }
+    }
+
+}
+
+//Stateless composable function
+//не управляет стейтом и не хранит его
+@Composable
+fun FollowButton(
+    isFollowed: State<Boolean>,
+    clickListener: () -> Unit
+) {
+    Button(
+        onClick = { clickListener() },
+        colors = ButtonDefaults.buttonColors(
+            backgroundColor = if (isFollowed.value) {
+                MaterialTheme.colors.onBackground.copy(alpha = 0.5f)
+            } else {
+                MaterialTheme.colors.primary.copy()
+            }
+        )
+    ) {
+        val text = if (isFollowed.value) "Unfollow" else "Follow"
+        Text(text = text)
     }
 }
 
@@ -121,20 +138,20 @@ fun Counters() {
 
 }
 
-
-@Preview
-@Composable
-fun InstagramPreviewLight() {
-    ComposeExerciseTheme(darkTheme = false) {
-        InstagramProfileCard()
-    }
-}
-
-@Preview
-@Composable
-fun InstagramPreviewDark() {
-    ComposeExerciseTheme(darkTheme = true) {
-        InstagramProfileCard()
-
-    }
-}
+//
+//@Preview
+//@Composable
+//fun InstagramPreviewLight() {
+//    ComposeExerciseTheme(darkTheme = false) {
+//        InstagramProfileCard(viewModel)
+//    }
+//}
+//
+//@Preview
+//@Composable
+//fun InstagramPreviewDark() {
+//    ComposeExerciseTheme(darkTheme = true) {
+//        InstagramProfileCard(viewModel)
+//
+//    }
+//}

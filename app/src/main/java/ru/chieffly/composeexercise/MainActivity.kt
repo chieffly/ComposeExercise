@@ -20,7 +20,7 @@ class MainActivity : ComponentActivity() {
                         .fillMaxSize()
                         .background(MaterialTheme.colors.background)
                 ) {
-                    VkFeedCard()
+                    MainScreen()
                 }
             }
         }

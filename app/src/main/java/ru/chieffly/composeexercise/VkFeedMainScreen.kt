@@ -85,9 +85,8 @@ fun MainScreen(viewModel: MainViewModel) {
         VkFeedCard(
             modifier = Modifier.padding(8.dp),
             feedItem = feedItem.value,
-            onStatisticsItemClickListener = { newItem ->
-                viewModel.updateCount(newItem)
-            }
+            onStatisticsItemClickListener = viewModel::updateCount
+
         )
     }
 }

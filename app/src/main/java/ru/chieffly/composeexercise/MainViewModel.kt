@@ -3,6 +3,8 @@ package ru.chieffly.composeexercise
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import ru.chieffly.composeexercise.domain.FeedItem
+import ru.chieffly.composeexercise.domain.StatisticItem
 
 /**
  *Created by Bryantsev Anton on 28.06.2023.
@@ -10,11 +12,21 @@ import androidx.lifecycle.ViewModel
 
 class MainViewModel : ViewModel() {
 
-    private val _isFollowing = MutableLiveData<Boolean>()
-    val isFollowing: LiveData<Boolean> = _isFollowing
+    private val _feedItem = MutableLiveData(FeedItem())
+    val feedItem: LiveData<FeedItem> = _feedItem
 
-    fun changesFollowingStatus() {
-        val wasFollowing = _isFollowing.value ?: false
-        _isFollowing.value = !wasFollowing
+    fun updateCount(item: StatisticItem) {
+        val oldStat = feedItem.value?.statistics ?: throw IllegalStateException()
+        val newStat = oldStat.toMutableList().apply {
+            this.replaceAll { oldItem ->
+                if (oldItem.type == item.type) {
+                    oldItem.copy(count = oldItem.count + 1)
+                } else
+                    oldItem
+            }
+        }
+        _feedItem.value = feedItem.value?.copy(
+            statistics = newStat
+        )
     }
 }

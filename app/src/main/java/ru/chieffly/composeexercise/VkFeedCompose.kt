@@ -2,6 +2,7 @@ package ru.chieffly.composeexercise
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -14,14 +15,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.chieffly.composeexercise.domain.FeedItem
 import ru.chieffly.composeexercise.domain.StatisticItem
 import ru.chieffly.composeexercise.domain.StatisticType
-import ru.chieffly.composeexercise.ui.theme.ComposeExerciseTheme
 
 /**
  *Created by Bryantsev Anton on 27.06.2023.
@@ -30,7 +28,8 @@ import ru.chieffly.composeexercise.ui.theme.ComposeExerciseTheme
 @Composable
 fun VkFeedCard(
     modifier: Modifier = Modifier,
-    feedItem: FeedItem
+    feedItem: FeedItem,
+    onStatisticsItemClickListener: (StatisticItem) -> Unit
 ) {
     Card(
         modifier = modifier,
@@ -44,11 +43,13 @@ fun VkFeedCard(
             VkCardTopper(feedItem.communityName, feedItem.publicationDate, feedItem.AvatarResId)
             Text(text = feedItem.postText, modifier = Modifier.padding(4.dp))
             Image(
-                painter = painterResource(id = feedItem.contentImageResId), contentDescription = "", modifier = Modifier
+                painter = painterResource(id = feedItem.contentImageResId),
+                contentDescription = "",
+                modifier = Modifier
                     .padding(4.dp)
             )
             Spacer(modifier = Modifier.height(4.dp))
-            FeedCardStatistics(feedItem.statistics)
+            FeedCardStatistics(statistics = feedItem.statistics, onItemClickListener = onStatisticsItemClickListener)
         }
     }
 }
@@ -90,23 +91,24 @@ private fun VkCardTopper(
 
 @Composable
 private fun FeedCardStatistics(
-    statistics: List<StatisticItem>
+    statistics: List<StatisticItem>,
+    onItemClickListener: (StatisticItem) -> Unit
 ) {
     Row {
         Row(modifier = Modifier.weight(1f)) {
             val viewsItem = statistics.getItemByType(StatisticType.VIEWS)
-            IconWithCount(R.drawable.ic_eye_24, viewsItem.count.toString())
+            IconWithCount(drawableId = R.drawable.ic_eye_24, count = viewsItem.count.toString(), onClickListener = { onItemClickListener(viewsItem) })
         }
         Row(
             modifier = Modifier.weight(1f),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             val sharesItem = statistics.getItemByType(StatisticType.SHARES)
-            IconWithCount(R.drawable.baseline_share_24, sharesItem.count.toString())
+            IconWithCount(drawableId = R.drawable.baseline_share_24, count = sharesItem.count.toString(), onClickListener = { onItemClickListener(sharesItem) })
             val commentsItem = statistics.getItemByType(StatisticType.COMMENTS)
-            IconWithCount(R.drawable.baseline_message_24, commentsItem.count.toString())
+            IconWithCount(drawableId = R.drawable.baseline_message_24, count = commentsItem.count.toString(), onClickListener = { onItemClickListener(commentsItem) })
             val likesItem = statistics.getItemByType(StatisticType.LIKES)
-            IconWithCount(R.drawable.baseline_favorite_border_24, likesItem.count.toString())
+            IconWithCount(drawableId = R.drawable.baseline_favorite_border_24, count = likesItem.count.toString(), onClickListener = { onItemClickListener(likesItem) })
         }
     }
 }
@@ -116,8 +118,17 @@ private fun List<StatisticItem>.getItemByType(type: StatisticType): StatisticIte
 }
 
 @Composable
-private fun IconWithCount(drawableId: Int, count: String) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
+private fun IconWithCount(
+    drawableId: Int,
+    count: String,
+    onClickListener: () -> Unit
+) {
+    Row(
+        modifier = Modifier.clickable {
+            onClickListener()
+        },
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         Icon(painter = painterResource(drawableId), contentDescription = "", tint = MaterialTheme.colors.onSecondary)
         Spacer(modifier = Modifier.width(4.dp))
         Text(text = count, color = MaterialTheme.colors.onSecondary)

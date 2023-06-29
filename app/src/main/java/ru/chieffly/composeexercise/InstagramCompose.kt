@@ -31,8 +31,10 @@ import ru.chieffly.composeexercise.ui.theme.ComposeExerciseTheme
 
 
 @Composable
-fun InstagramProfileCard(viewModel: MainViewModel) {
-    val isFollowed = viewModel.isFollowing.observeAsState(false)
+fun InstagramProfileCard() {
+    val isFollowed = rememberSaveable {
+        mutableStateOf(false)
+    }
     Card(
         backgroundColor = MaterialTheme.colors.background,
         modifier = Modifier.padding(8.dp),
@@ -83,7 +85,7 @@ fun InstagramProfileCard(viewModel: MainViewModel) {
             )
             //Statefull composable function
             FollowButton(isFollowed = isFollowed) {
-                viewModel.changesFollowingStatus()
+//                viewModel.changesFollowingStatus()
             }
         }
     }

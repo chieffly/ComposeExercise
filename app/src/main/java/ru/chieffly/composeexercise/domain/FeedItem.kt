@@ -12,7 +12,7 @@ data class FeedItem(
     val AvatarResId: Int = R.drawable.avatar,
     val postText: String = "Lorem uopd dsjfls noetu fnacbajse asf wqrzzxcv vb d sakxioq",
     val contentImageResId: Int = R.drawable.post_image,
-    val statistics: List<StatisticItem> = listOf(
+    var statistics: List<StatisticItem> = listOf(
         StatisticItem(type = StatisticType.VIEWS, 252),
         StatisticItem(type = StatisticType.SHARES, 12),
         StatisticItem(type = StatisticType.COMMENTS, 73),

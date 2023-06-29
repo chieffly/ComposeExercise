@@ -9,6 +9,7 @@ import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -25,7 +26,9 @@ import ru.chieffly.composeexercise.domain.FeedItem
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun MainScreen() {
+fun MainScreen(viewModel: MainViewModel) {
+    val feedItem = viewModel.feedItem.observeAsState(FeedItem())
+
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val fabIsVisible = remember { mutableStateOf(true) }
@@ -81,7 +84,10 @@ fun MainScreen() {
     {
         VkFeedCard(
             modifier = Modifier.padding(8.dp),
-            FeedItem()
+            feedItem = feedItem.value,
+            onStatisticsItemClickListener = { newItem ->
+                viewModel.updateCount(newItem)
+            }
         )
     }
 }

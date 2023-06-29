@@ -18,6 +18,9 @@ import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import ru.chieffly.composeexercise.domain.FeedItem
+import ru.chieffly.composeexercise.domain.StatisticItem
+import ru.chieffly.composeexercise.domain.StatisticType
 import ru.chieffly.composeexercise.ui.theme.ComposeExerciseTheme
 
 /**
@@ -25,8 +28,12 @@ import ru.chieffly.composeexercise.ui.theme.ComposeExerciseTheme
  **/
 
 @Composable
-fun VkFeedCard() {
+fun VkFeedCard(
+    modifier: Modifier = Modifier,
+    feedItem: FeedItem
+) {
     Card(
+        modifier = modifier,
         shape = RoundedCornerShape(4.dp),
         border = BorderStroke(1.dp, Color.Gray)
     ) {
@@ -34,26 +41,30 @@ fun VkFeedCard() {
             modifier = Modifier
                 .padding(8.dp)
         ) {
-            VkCardTopper()
-            Text(text = "текст поста", modifier = Modifier.padding(4.dp))
+            VkCardTopper(feedItem.communityName, feedItem.publicationDate, feedItem.AvatarResId)
+            Text(text = feedItem.postText, modifier = Modifier.padding(4.dp))
             Image(
-                painter = ColorPainter(Color.Green), contentDescription = "", modifier = Modifier
+                painter = painterResource(id = feedItem.contentImageResId), contentDescription = "", modifier = Modifier
                     .padding(4.dp)
-                    .size(400.dp)
             )
-            VkBottomPane()
+            Spacer(modifier = Modifier.height(4.dp))
+            FeedCardStatistics(feedItem.statistics)
         }
     }
 }
 
 @Composable
-fun VkCardTopper() {
+private fun VkCardTopper(
+    communityName: String,
+    dateOfPublication: String,
+    avatarResId: Int
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
-            painter = ColorPainter(Color.Green), contentDescription = "", modifier = Modifier
+            painter = painterResource(id = avatarResId), contentDescription = "", modifier = Modifier
                 .size(60.dp)
                 .padding(4.dp)
                 .clip(CircleShape)
@@ -64,12 +75,12 @@ fun VkCardTopper() {
                 .weight(1f)
         ) {
             Text(
-                text = "Название группы",
+                text = communityName,
                 color = MaterialTheme.colors.onPrimary
             )
             Spacer(modifier = Modifier.size(4.dp))
             Text(
-                text = "15:20",
+                text = dateOfPublication,
                 color = MaterialTheme.colors.onSecondary
             )
         }
@@ -78,41 +89,37 @@ fun VkCardTopper() {
 }
 
 @Composable
-fun VkBottomPane() {
+private fun FeedCardStatistics(
+    statistics: List<StatisticItem>
+) {
     Row {
         Row(modifier = Modifier.weight(1f)) {
-            IconWithCount(R.drawable.ic_eye_24, "90")
+            val viewsItem = statistics.getItemByType(StatisticType.VIEWS)
+            IconWithCount(R.drawable.ic_eye_24, viewsItem.count.toString())
         }
-        Row(modifier = Modifier.weight(1f), horizontalArrangement = Arrangement.SpaceBetween) {
-            IconWithCount(R.drawable.baseline_share_24, "206")
-            IconWithCount(R.drawable.baseline_message_24, "11")
-            IconWithCount(R.drawable.baseline_favorite_border_24, "458")
+        Row(
+            modifier = Modifier.weight(1f),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            val sharesItem = statistics.getItemByType(StatisticType.SHARES)
+            IconWithCount(R.drawable.baseline_share_24, sharesItem.count.toString())
+            val commentsItem = statistics.getItemByType(StatisticType.COMMENTS)
+            IconWithCount(R.drawable.baseline_message_24, commentsItem.count.toString())
+            val likesItem = statistics.getItemByType(StatisticType.LIKES)
+            IconWithCount(R.drawable.baseline_favorite_border_24, likesItem.count.toString())
         }
     }
 }
 
+private fun List<StatisticItem>.getItemByType(type: StatisticType): StatisticItem {
+    return this.find { it.type == type } ?: throw IllegalStateException("Unknown statistics type $type ")
+}
+
 @Composable
-fun IconWithCount(drawableId: Int, count: String) {
+private fun IconWithCount(drawableId: Int, count: String) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Icon(painter = painterResource(drawableId), contentDescription = "", tint = MaterialTheme.colors.onSecondary)
         Spacer(modifier = Modifier.width(4.dp))
         Text(text = count, color = MaterialTheme.colors.onSecondary)
-    }
-}
-
-@Preview
-@Composable
-private fun PreviewVKLight() {
-    ComposeExerciseTheme(darkTheme = false) {
-        VkFeedCard()
-
-    }
-}
-
-@Preview
-@Composable
-private fun PreviewVKDark() {
-    ComposeExerciseTheme(darkTheme = true) {
-        VkFeedCard()
     }
 }

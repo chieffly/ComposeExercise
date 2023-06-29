@@ -1,6 +1,7 @@
 package ru.chieffly.composeexercise
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
@@ -11,9 +12,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
+import ru.chieffly.composeexercise.domain.FeedItem
 
 /**
  *Created by Bryantsev Anton on 28.06.2023.
@@ -75,7 +79,10 @@ fun MainScreen() {
 
     )
     {
-
+        VkFeedCard(
+            modifier = Modifier.padding(8.dp),
+            FeedItem()
+        )
     }
 }
 

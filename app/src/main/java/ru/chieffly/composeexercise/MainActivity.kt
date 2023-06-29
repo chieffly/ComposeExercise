@@ -15,14 +15,14 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val viewModel = ViewModelProvider(this)[MainViewModel::class.java]
-            setContent {
+        setContent {
             ComposeExerciseTheme {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
                         .background(MaterialTheme.colors.background)
                 ) {
-                    InstagramProfileCard(viewModel)
+                    MainScreen()
                 }
             }
         }
